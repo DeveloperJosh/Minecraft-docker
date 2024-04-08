@@ -1,54 +1,88 @@
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/itzg/rcon-cli)](https://github.com/itzg/rcon-cli/releases/latest)
-[![test](https://github.com/itzg/rcon-cli/actions/workflows/test.yml/badge.svg)](https://github.com/itzg/rcon-cli/actions/workflows/test.yml)
+## Prerequisites
 
+- Docker installed on your system. You can download and install Docker from [here](https://docs.docker.com/get-docker/).
 
-A little RCON cli based on james4k's RCON library for golang.
+## Getting Started
 
-## Installation
+1. Clone or download this repository to your local machine.
 
-1. Download the appropriate binary for your platform from the [latest releases](https://github.com/itzg/rcon-cli/releases/latest)
+2. Navigate to the directory containing the Dockerfile.
 
-2. On UNIX-y platforms, set the binary to be executable - done!
+3. Build the Docker image using the following command:
 
-If you [have Go](https://golang.org/dl/) you could also simply `go get github.com/itzg/rcon-cli && rcon-cli -h`.
+    ```bash
+    docker build -t minecraft-server .
+    ```
 
-## Usage
+4. Once the build is complete, you can run the Docker container with the following command:
 
-```text
-rcon-cli is a CLI for attaching to an RCON enabled game server, such as Minecraft.
-Without any additional arguments, the CLI will start an interactive session with
-the RCON server.
+    ```bash
+    docker run -d -p 25565:25565 -p 25575:25575 --name minecraft-server minecraft-server
+    ```
 
-If arguments are passed into the CLI, then the arguments are sent
-as a single command (joined by spaces), the response is displayed,
-and the CLI will exit.
+    This command will start the Minecraft server container in detached mode, exposing ports 25565 (Minecraft) and 25575 (RCON).
 
-Usage:
-  rcon-cli [flags] [RCON command ...]
+5. Access your Minecraft server by connecting to `localhost:25565` from your Minecraft client.
 
-Examples:
+## Using Docker Compose
 
-rcon-cli --host mc1 --port 25575
-rcon-cli --port 25575 stop
-RCON_PORT=25575 rcon-cli stop
+Alternatively, you can use Docker Compose to manage your Minecraft server. Follow these steps to set it up:
 
+1. Create a `docker-compose.yml` file in the root directory of your project with the following content:
 
-Flags:
-      --config string     config file (default is $HOME/.rcon-cli.yaml)
-      --host string       RCON server's hostname (default "localhost")
-      --password string   RCON server's password
-      --port int          Server's RCON port (default 27015)
-```
+    ```yaml
+    version: '3.8'
 
-## Configuration
+    services:
+      minecraft-server:
+        build: .
+        ports:
+          - "25565:25565"  # Minecraft server port
+          - "25575:25575"  # RCON port
+        environment:
+          SERVER_TYPE: paper  # Specify the server type (paper, spigot)
+          SERVER_PORT: 25565  # Minecraft server port
+          RCON_HOST: localhost  # RCON host
+          RCON_PORT: 25575  # RCON port
+          RCON_PASS: password  # RCON password
+          MIN_MEMORY: 4G  # Minimum memory allocation for the server
+    ```
 
-You can preconfigure rcon-cli to use the arguments you want by default by modifying the file `.rcon-cli.yaml` in your home folder. If you want to use any other file use the argument `--config /path/to/the/config.yaml`. 
+2. Run the following command to start the Minecraft server using Docker Compose:
 
-Example of a `.rcon-cli.yaml` file:
-```yaml
-host: mydomain.com
-port: 12345
-password: mycustompassword
-```
+    ```bash
+    docker-compose up -d
+    ```
 
-That way executing `rcon-cli` without arguments would connect to `mydomain.com:12345` with the password `mycustompassword` by default.
+    This will start the Minecraft server container in detached mode, using the configuration specified in the `docker-compose.yml` file.
+
+## Sending Commands via RCON
+
+You can send commands to the Minecraft server using RCON. By default, the RCON password is `password`. To send commands, follow these steps:
+
+1. Connect to your server using the following command:
+
+    ```bash
+     rcon-cli --password "your password"
+    ```
+
+## Editing Environment Variables
+
+You can customize the server configuration by editing the environment variables in the Dockerfile or the `docker-compose.yml` file. Here are the available variables and their default values:
+
+- `SERVER_TYPE`: Type of Minecraft server (paper, spigot, velocity).
+- `SERVER_PORT`: Port on which the Minecraft server listens.
+- `MIN_MEMORY`: Minimum memory allocation for the Java Virtual Machine (JVM).
+- `RCON_HOST`: Hostname or IP address for RCON connections.
+- `RCON_PORT`: Port used for RCON connections.
+- `RCON_PASS`: Password for RCON authentication.
+
+Make sure to rebuild the Docker image or restart the Docker Compose service after editing the environment variables.
+
+## Contributing
+
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
