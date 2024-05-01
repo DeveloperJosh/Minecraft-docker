@@ -11,8 +11,8 @@ ENV RCON_PASS password
 ENV MIN_MEMORY 4G
 
 # Define URLs for downloading server files
-ENV PAPER_URL=https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/466/downloads/paper-1.20.4-466.jar
-ENV SPIGOT_URL=https://getbukkit.org/get/272245e4f948b0a66b0b4c34dfa27c49/spigot-1.17.1.jar
+ENV PAPER_URL=https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/496/downloads/paper-1.20.4-496.jar
+ENV SPIGOT_URL=https://download.getbukkit.org/spigot/spigot-1.20.4.jar
 
 RUN apt-get update && apt-get install -y curl jq wget
 #     wget -O /tmp/rcon-cli.tar.gz https://github.com/itzg/rcon-cli/releases/download/1.6.5/rcon-cli_1.6.5_linux_amd64.tar.gz && \
